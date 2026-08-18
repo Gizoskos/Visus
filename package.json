@@ -1,0 +1,29 @@
+{
+  "name": "visual-study-engine",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsc -b packages/shared && corepack pnpm --parallel --filter @visual-study/api --filter @visual-study/worker --filter @visual-study/web dev",
+    "build": "tsc -b tsconfig.build.json && corepack pnpm --filter @visual-study/web build",
+    "lint": "eslint . && prettier --check .",
+    "typecheck": "tsc -b tsconfig.build.json && corepack pnpm --filter @visual-study/web typecheck",
+    "pretest": "tsc -b packages/shared",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "eslint": "10.8.1",
+    "prettier": "3.9.6",
+    "tsx": "4.23.12",
+    "typescript": "6.0.2",
+    "typescript-eslint": "8.67.0",
+    "vitest": "4.1.10"
+  }
+}

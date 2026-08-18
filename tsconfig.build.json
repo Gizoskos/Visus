@@ -1,0 +1,16 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/shared" },
+    { "path": "packages/db" },
+    { "path": "packages/queue" },
+    { "path": "packages/ai" },
+    { "path": "packages/extraction" },
+    { "path": "packages/embeddings" },
+    { "path": "packages/visual" },
+    { "path": "packages/study" },
+    { "path": "packages/storage" },
+    { "path": "apps/api" },
+    { "path": "apps/worker" }
+  ]
+}

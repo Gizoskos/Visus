@@ -1,0 +1,9 @@
+.env
+.env.local
+.env.*.local
+.DS_Store
+.next/
+.pnpm-store/
+dist/
+node_modules/
+*.tsbuildinfo

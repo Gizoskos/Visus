@@ -1,0 +1,15 @@
+{
+  "name": "@visual-study/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@visual-study/shared": "workspace:*",
+    "fastify": "5.12.0",
+    "pino": "10.3.1"
+  }
+}

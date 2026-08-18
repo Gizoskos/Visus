@@ -59,6 +59,8 @@ docker compose down
 
 Phase 1 does not contain database schemas or clients, queues, AI workflows, document extraction, embeddings, storage providers, authentication, or offline service-worker behavior. PostgreSQL and Redis are available locally, but API readiness intentionally reports only the API process lifecycle. Database and Drizzle schema work is the next phase.
 
+system architecture
+
               ┌──────────────┐
               │   Next.js    │
               │   apps/web   │
@@ -82,3 +84,20 @@ Phase 1 does not contain database schemas or clients, queues, AI workflows, docu
              ┌────────────────┼─────────────┐
              ▼                ▼             ▼
         extraction           ai         embeddings# Visus
+
+
+db
+
+users
+  │
+  ├── subjects
+  │      │
+  │      └── materials
+  │             │
+  │             ├── material_pages
+  │             │       │
+  │             │       └── material_chunks
+  │             │
+  │             └── material_chunks
+  │
+  └── materials
