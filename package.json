@@ -11,6 +11,10 @@
     "build": "tsc -b tsconfig.build.json && corepack pnpm --filter @visual-study/web build",
     "lint": "eslint . && prettier --check .",
     "typecheck": "tsc -b tsconfig.build.json && corepack pnpm --filter @visual-study/web typecheck",
+    "db:generate": "tsc -b packages/db && corepack pnpm --filter @visual-study/db exec drizzle-kit generate --config=drizzle.config.ts",
+    "db:migrate": "node --env-file=.env --import tsx packages/db/src/migrate.ts",
+    "db:push": "tsc -b packages/db && corepack pnpm --filter @visual-study/db exec drizzle-kit push --config=drizzle.config.ts",
+    "db:seed": "node --env-file=.env --import tsx packages/db/src/seed/index.ts",
     "pretest": "tsc -b packages/shared",
     "test": "vitest run"
   },

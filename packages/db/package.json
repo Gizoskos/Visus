@@ -5,10 +5,25 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "db:generate": "pnpm build && drizzle-kit generate --config=drizzle.config.ts",
+    "db:push": "pnpm build && drizzle-kit push --config=drizzle.config.ts",
+    "db:migrate": "node --env-file=../../.env --import tsx src/migrate.ts",
+    "db:seed": "node --env-file=../../.env --import tsx src/seed/index.ts"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "dependencies": {
+    "@visual-study/shared": "workspace:*",
+    "drizzle-orm": "0.44.5",
+    "postgres": "3.4.7"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.4"
   }
 }

@@ -4,7 +4,7 @@
 
 Visual Study Engine is a TypeScript modular monolith with a dedicated background worker. The API accepts short-lived requests, PostgreSQL will remain the source of truth, and expensive OCR, AI, embedding, and document work will run outside HTTP request lifecycles. Generated material will retain source page or chunk references whenever practical.
 
-Phase 1 establishes process boundaries and tooling. It deliberately does not implement speculative domain interfaces or infrastructure clients.
+Phase 2 adds the database foundation while still avoiding speculative application services and infrastructure wrappers.
 
 ## Components
 
@@ -22,7 +22,7 @@ The Next.js application is the tablet-first reading and visual-learning interfac
 
 ### Database
 
-PostgreSQL will hold documents, source locations, generated artifacts, learning state, and job-related domain records. Drizzle schemas, migrations, and the pgvector extension are deferred to Phase 2. The local PostgreSQL image already includes pgvector support.
+PostgreSQL now holds the foundational ownership and ingestion records for users, subjects, materials, pages, and chunks. Drizzle is the default access layer for CRUD, relations, migrations, transactions, and typed repositories. The local PostgreSQL image already includes pgvector support, but pgvector and similarity-search tables remain deferred.
 
 ### Redis and BullMQ
 
@@ -54,4 +54,8 @@ Redis will provide BullMQ's queue infrastructure, retries, and job coordination.
 
 ## Runtime flow
 
-At present, each application validates its environment and initializes logging at startup. Fastify marks itself ready after its own startup hooks complete. The worker waits on an abort signal and shuts down cleanly on SIGINT or SIGTERM. PostgreSQL and Redis run locally but are not application dependencies until Phase 2 and the queue phase respectively.
+Each application validates its environment and initializes logging at startup. Fastify marks itself ready after its own startup hooks complete. The worker waits on an abort signal and shuts down cleanly on SIGINT or SIGTERM. `packages/db` centralizes PostgreSQL connections, migrations, schema, repositories, and deterministic seed data without coupling that behavior to Fastify or the worker.
+
+## Database flow
+
+Document ownership is anchored on `users`, grouped optionally by `subjects`, and stored in `materials`. Extracted page-level data lives in `material_pages`, and chunk-level data lives in `material_chunks`. Deletes are intentionally conservative at ownership boundaries: deleting a subject detaches materials instead of destroying them, and deleting a user is restricted while owned academic data exists.

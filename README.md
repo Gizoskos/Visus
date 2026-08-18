@@ -1,10 +1,10 @@
 # Visual Study Engine
 
-Visual Study Engine is a tablet-first platform for turning academic material into structured, visual, and source-grounded study tools. This repository currently contains the Phase 1 application foundation only.
+Visual Study Engine is a tablet-first platform for turning academic material into structured, visual, and source-grounded study tools. This repository now includes the Phase 2 database foundation.
 
 ## Architecture
 
-The project is a TypeScript modular monolith with independently runnable API, worker, and web processes. PostgreSQL is the planned source of truth, Redis is reserved for BullMQ infrastructure, and expensive document or AI work will run asynchronously. See [docs/architecture.md](docs/architecture.md) for component responsibilities and current boundaries.
+The project is a TypeScript modular monolith with independently runnable API, worker, and web processes. PostgreSQL is the source of truth, Redis is reserved for BullMQ infrastructure, and expensive document or AI work will run asynchronously. See [docs/architecture.md](docs/architecture.md) for component responsibilities and current boundaries, and [docs/database.md](docs/database.md) for Phase 2 schema and workflow details.
 
 ## Repository structure
 
@@ -19,7 +19,7 @@ packages/
 docs/        Architecture documentation
 ```
 
-Only `packages/shared` contains runtime behavior in Phase 1. The other packages are importable boundaries for work scheduled in later phases.
+`packages/shared` and `packages/db` now contain runtime behavior. The remaining packages are still importable boundaries for later phases.
 
 ## Prerequisites
 
@@ -34,6 +34,8 @@ cp .env.example .env
 corepack enable
 pnpm install
 docker compose up -d
+pnpm db:migrate
+pnpm db:seed
 pnpm dev
 ```
 
@@ -47,17 +49,30 @@ docker compose down
 
 ## Commands
 
-| Command          | Purpose                                          |
-| ---------------- | ------------------------------------------------ |
-| `pnpm dev`       | Start API, worker, and web development processes |
-| `pnpm build`     | Compile packages and applications                |
-| `pnpm lint`      | Run ESLint and verify formatting                 |
-| `pnpm typecheck` | Type-check the workspace                         |
-| `pnpm test`      | Run the Vitest suite                             |
+| Command            | Purpose                                          |
+| ------------------ | ------------------------------------------------ |
+| `pnpm dev`         | Start API, worker, and web development processes |
+| `pnpm build`       | Compile packages and applications                |
+| `pnpm db:generate` | Generate Drizzle migration files from schema     |
+| `pnpm db:migrate`  | Apply generated SQL migrations                   |
+| `pnpm db:push`     | Push schema changes directly for local dev only  |
+| `pnpm db:seed`     | Seed a deterministic local development dataset   |
+| `pnpm lint`        | Run ESLint and verify formatting                 |
+| `pnpm typecheck`   | Type-check the workspace                         |
+| `pnpm test`        | Run the Vitest suite                             |
+
+You can also work package-locally when you only care about the database:
+
+```sh
+pnpm --filter @visual-study/db db:generate
+pnpm --filter @visual-study/db db:push
+pnpm --filter @visual-study/db db:migrate
+pnpm --filter @visual-study/db db:seed
+```
 
 ## Current limits
 
-Phase 1 does not contain database schemas or clients, queues, AI workflows, document extraction, embeddings, storage providers, authentication, or offline service-worker behavior. PostgreSQL and Redis are available locally, but API readiness intentionally reports only the API process lifecycle. Database and Drizzle schema work is the next phase.
+Phase 2 adds the initial PostgreSQL schema, Drizzle repositories, migrations, and a local seed flow. It still does not add pgvector, AI-specific tables, visual artifact tables, flashcards, quizzes, embeddings, recommendations, study sessions, authentication, or storage-provider implementations. API readiness still reports only API process lifecycle.
 
 system architecture
 
@@ -85,19 +100,18 @@ system architecture
              ▼                ▼             ▼
         extraction           ai         embeddings# Visus
 
-
 db
 
 users
-  │
-  ├── subjects
-  │      │
-  │      └── materials
-  │             │
-  │             ├── material_pages
-  │             │       │
-  │             │       └── material_chunks
-  │             │
-  │             └── material_chunks
-  │
-  └── materials
+│
+├── subjects
+│ │
+│ └── materials
+│ │
+│ ├── material_pages
+│ │ │
+│ │ └── material_chunks
+│ │
+│ └── material_chunks
+│
+└── materials
